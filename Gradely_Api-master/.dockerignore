@@ -1,0 +1,11 @@
+**/.git
+**/.gitignore
+**/.gitattributes
+**/bin
+**/obj
+**/.vs
+**/node_modules
+claude-session.txt
+README.md
+Dockerfile
+/.dockerignore

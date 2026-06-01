@@ -3,8 +3,10 @@ using Gradely.Application;
 using Gradely.Domain.Entities;
 using Gradely.Domain.Enums;
 using Gradely.Infrastructure;
+using Gradely.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -129,6 +131,13 @@ namespace Gradely.Api
             //  4. BUILD THE APP & CONFIGURE MIDDLEWARE PIPELINE
             // ══════════════════════════════════════════════════════════
             var app = builder.Build();
+
+            // ── Auto-apply EF Core migrations (safe for Docker startup) ──
+            using (var scope = app.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                await db.Database.MigrateAsync();
+            }
 
             // ── Seed default Admin user ──
             // Creates admin@gradely.com if it doesn't exist yet.
